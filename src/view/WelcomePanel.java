@@ -125,30 +125,51 @@ public class WelcomePanel extends JPanel {
     }
 
     private void showGroupInfo(Group group) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    
+        JLabel titleLabel = new JLabel("Información del Grupo: " + group.getName());
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        panel.add(titleLabel, BorderLayout.NORTH);
+    
+        JTextArea infoTextArea = new JTextArea();
+        infoTextArea.setEditable(false);
+        infoTextArea.setLineWrap(true);
+        infoTextArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(infoTextArea);
+        scrollPane.setPreferredSize(new Dimension(300, 200));
+        panel.add(scrollPane, BorderLayout.CENTER);
+    
         StringBuilder message = new StringBuilder();
         message.append("Nombre del Grupo: ").append(group.getName()).append("\n");
         message.append("Descripción: ").append(group.getDescription()).append("\n");
-
+    
         try {
             List<User> groupUsers = Group.getUsersInGroup(group);
             message.append("Usuarios en el Grupo: ").append("\n");
             for (User u : groupUsers) {
                 message.append("- ").append(u.getUsername()).append("\n");
             }
-
+    
             List<Activity> groupActivities = Activity.getActivitiesByGroup(group);
             message.append("Actividades del Grupo: ").append("\n");
             for (Activity activity : groupActivities) {
                 message.append("- ").append(activity.getName()).append("\n");
+                message.append("  Descripción: ").append(activity.getDescription()).append("\n");
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al cargar la información del grupo", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        JOptionPane.showMessageDialog(null, message.toString(), "Información del Grupo", JOptionPane.INFORMATION_MESSAGE);
+    
+        infoTextArea.setText(message.toString());
+    
+        JOptionPane.showMessageDialog(null, panel, "Información del Grupo", JOptionPane.INFORMATION_MESSAGE);
     }
+    
+    
 
     private void cambiarPanel(JPanel panel) {
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);

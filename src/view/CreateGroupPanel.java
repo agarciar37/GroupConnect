@@ -67,12 +67,18 @@ public class CreateGroupPanel extends JPanel{
                 // Obtener los datos ingresados por el usuario
                 String nombreGrupo = groupNameField.getText();
                 String descripcionGrupo = groupDescriptionField.getText();
-
+        
                 try {
                     // Crear un nuevo grupo con los datos ingresados
-                    Group.createGroup(new Group(nombreGrupo, descripcionGrupo, users), users);
-                    // Mostrar un mensaje de éxito si el grupo se crea correctamente
-                    JOptionPane.showMessageDialog(null, "Group created successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    Group newGroup = new Group(nombreGrupo, descripcionGrupo, users);
+                    // Insertar el nuevo grupo en la base de datos
+                    Group.createGroup(newGroup, users);
+                    // Actualizar el objeto Group para obtener el ID real de la base de datos
+                    newGroup = Group.getGroupByName(nombreGrupo);
+                    // Obtener el ID del grupo recién creado
+                    int groupID = newGroup.getIdGroup();
+                    // Mostrar un mensaje de éxito con el ID del grupo
+                    JOptionPane.showMessageDialog(null, "Group created successfully. Group ID: " + groupID, "Success", JOptionPane.INFORMATION_MESSAGE);
                     // Volver al WelcomePanel
                     cambiarPanel(new WelcomePanel(user.getIdUser()));
                 } catch (SQLException ex) {
